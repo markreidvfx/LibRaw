@@ -69,6 +69,8 @@ extern "C"
       return "Bad crop box";
     case LIBRAW_TOO_BIG:
       return "Image too big for processing";
+    case LIBRAW_CRM_FRAME_OUT_OF_RANGE:
+      return "Requested frame out of range";
     default:
       return "Unknown error code";
     }

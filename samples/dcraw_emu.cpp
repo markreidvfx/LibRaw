@@ -91,6 +91,7 @@ void usage(const char *prog)
          "-f        Interpolate RGGB as four colors\n"
          "-m <num>  Apply a 3x3 median filter to R-G and B-G\n"
          "-s [0..N-1] Select one raw image from input file\n"
+         "-frame [0..N-1] Select one frame raw image from input file\n"
          "-4        Linear 16-bit, same as \"-6 -W -g 1 1\n"
          "-6        Write 16-bit output\n"
          "-g pow ts Set gamma curve to gamma pow and toe slope ts (default = "
@@ -244,6 +245,7 @@ int main(int argc, char *argv[])
   int i, arg, c, ret;
   char opm, opt, *cp, *sp;
   int use_timing = 0, use_mem = 0, use_mmap = 0;
+  int use_frame_num = 0;
   char *outext = NULL;
 #ifdef USE_DNGSDK
   dng_host *dnghost = NULL;
@@ -365,7 +367,12 @@ int main(int argc, char *argv[])
       OUT.half_size = 1;
       break;
     case 'f':
-      if (!strcmp(optstr, "-fbdd"))
+      if (!strcmp(optstr, "-frame"))
+      {
+        OUTR.frame_select = abs(atoi(argv[arg++]));
+        use_frame_num = 1;
+      }
+      else if (!strcmp(optstr, "-fbdd"))
         OUT.fbdd_noiserd = atoi(argv[arg++]);
       else
       {
@@ -597,8 +604,12 @@ int main(int argc, char *argv[])
       timerprint("LibRaw::dcraw_process()", argv[arg]);
 
     if (!outext)
-      snprintf(outfn, sizeof(outfn), "%s.%s", argv[arg],
-               OUT.output_tiff ? "tiff" : (P1.colors > 1 ? "ppm" : "pgm"));
+      if (use_frame_num)
+        snprintf(outfn, sizeof(outfn), "%s.%08d.%s", argv[arg], OUTR.frame_select,
+                OUT.output_tiff ? "tiff" : (P1.colors > 1 ? "ppm" : "pgm"));
+      else
+        snprintf(outfn, sizeof(outfn), "%s.%s", argv[arg],
+                OUT.output_tiff ? "tiff" : (P1.colors > 1 ? "ppm" : "pgm"));
     else if (!strcmp(outext, "-"))
       snprintf(outfn, sizeof(outfn), "-");
     else

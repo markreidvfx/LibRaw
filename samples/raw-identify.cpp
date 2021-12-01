@@ -502,6 +502,7 @@ void print_verbose(FILE *outfile, LibRaw &MyCoolRawProcessor, std::string &fn)
     fprintf(outfile, "Baseline exposure: %04.3f\n", C.dng_levels.baseline_exposure);
 
   fprintf(outfile, "Number of raw images: %d\n", P1.raw_count);
+  fprintf(outfile, "Number of raw frames: %d\n", P1.raw_frame_count);
 
   if (S.pixel_aspect != 1)
     fprintf(outfile, "Pixel Aspect Ratio: %0.6f\n", S.pixel_aspect);

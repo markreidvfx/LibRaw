@@ -111,6 +111,9 @@ CameraMetaDataLR *make_camera_metadata();
     case LIBRAW_EXCEPTION_BAD_CROP:                                            \
       recycle();                                                               \
       return LIBRAW_BAD_CROP;                                                  \
+    case LIBRAW_EXCEPTION_CRM_FRAME_OUT_OF_RANGE:                              \
+      recycle();                                                               \
+      return LIBRAW_CRM_FRAME_OUT_OF_RANGE;                                    \
     default:                                                                   \
       return LIBRAW_UNSPECIFIED_ERROR;                                         \
     }                                                                          \

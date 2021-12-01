@@ -191,6 +191,7 @@ typedef unsigned long long UINT64;
     char normalized_model[64];
     unsigned maker_index;
     unsigned raw_count;
+    unsigned raw_frame_count;
     unsigned dng_version;
     unsigned is_foveon;
     int colors;
@@ -911,6 +912,7 @@ typedef unsigned long long UINT64;
       int use_dngsdk;
       unsigned options;
       unsigned shot_select;  /* -s */
+      unsigned frame_select;
       unsigned specials;
       unsigned max_raw_memory_mb;
       int sony_arw2_posterization_thr;
