@@ -54,6 +54,7 @@ float roundf(float f) { return floorf(f + 0.5); }
 #define P1 MyCoolRawProcessor.imgdata.idata
 #define P2 MyCoolRawProcessor.imgdata.other
 #define P3 MyCoolRawProcessor.imgdata.makernotes.common
+#define imCanon MyCoolRawProcessor.imgdata.makernotes.canon
 
 #define mnLens MyCoolRawProcessor.imgdata.lens.makernotes
 #define exifLens MyCoolRawProcessor.imgdata.lens
@@ -462,6 +463,19 @@ void print_verbose(FILE *outfile, LibRaw &MyCoolRawProcessor, std::string &fn)
   fprintf(outfile, "\tAdapter: %s\n", mnLens.Adapter);
   fprintf(outfile, "\tAttachmentID: %lld\n", mnLens.AttachmentID);
   fprintf(outfile, "\tAttachment: %s\n", mnLens.Attachment);
+
+  if(imCanon.Quality == 130 || imCanon.Quality == 131)
+  {
+    fprintf(outfile, "\tQuality: %s\n", imCanon.Quality == 131 ? "StandardRaw" : "LightRaw" );
+    if (imCanon.CRMCanonLog > 0 && imCanon.CRMCanonLog <= 3) {
+      fprintf(outfile, "\tCanonLog: CLog%d\n", imCanon.CRMCanonLog);
+      fprintf(outfile, "\tColorspace: %s\n",
+            imCanon.CRMColorspace == 2 ? "CinemaGamut": imCanon.CRMColorspace == 1 ? "BT.2020" : "BT.709");
+
+      fprintf(outfile, "\tColorMatrix: %s\n", imCanon.CRMColorMatrix == 1? "Neutral" : "EOSOriginal");
+    }
+  }
+
   fprintf(outfile, "\n");
 
   fprintf(outfile, "ISO speed: %d\n", (int)P2.iso_speed);
