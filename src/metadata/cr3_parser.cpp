@@ -221,6 +221,7 @@ int LibRaw::parseCR3_CTMD(short trackNum)
   uint32_t relpos_inDir = 0;
   uint32_t relpos_inBox = 0;
   unsigned szItem, Tag, lTag;
+  int num, den;
   ushort tItem;
 
 #define track libraw_internal_data.unpacker_data.crx_header[trackNum]
@@ -246,7 +247,38 @@ int LibRaw::parseCR3_CTMD(short trackNum)
       err = -11;
       goto ctmd_fin;
     }
-    if ((tItem == 7) || (tItem == 8) || (tItem == 9))
+    if (tItem == 4 && szItem >= 16)
+    {
+      relpos_inBox = relpos_inDir + 12L;
+      fseek(ifp, track.MediaOffset + relpos_inBox, SEEK_SET);
+      num = get2();
+      den = get2();
+      if (den > 0 && num > 0)
+      {
+        ilm.CurFocal = (float)num/(float)den;
+        focal_len = ilm.CurFocal ;
+      }
+    }
+    else if (tItem == 5 && szItem >= 24)
+    {
+      relpos_inBox = relpos_inDir + 12L;
+      fseek(ifp, track.MediaOffset + relpos_inBox, SEEK_SET);
+      num = get2();
+      den = get2();
+      if (den > 0 && num > 0)
+      {
+        ilm.CurAp = (float)num/(float)den;
+        aperture = ilm.CurAp;
+      }
+      num = get2();
+      den = get2();
+      if (den > 0 && num > 0)
+        shutter = (float)num/(float)den;
+      num = get4() & 0x7fffffff;
+      if (num)
+        iso_speed = num;
+    }
+    else if ((tItem == 7) || (tItem == 8) || (tItem == 9))
     {
       relpos_inBox = relpos_inDir + 12L;
       while (relpos_inBox + 8 < relpos_inDir + szItem)
